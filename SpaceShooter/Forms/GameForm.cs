@@ -25,6 +25,10 @@ namespace SpaceShooter.Forms
 
         private DateTime lastShootTime = DateTime.MinValue;
 
+        private List<Bullet> bullets;
+
+        private int fireRate = 200;
+
         public GameForm()
         {
             InitializeComponent();
@@ -40,7 +44,9 @@ namespace SpaceShooter.Forms
             GameTimer.Interval = 20;
             GameTimer.Tick += Gameloop;
             GameTimer.Start();
-           
+
+            bullets = new List<Bullet>();
+
         }
 
         private void Gameloop(object sender, EventArgs e)
@@ -67,6 +73,23 @@ namespace SpaceShooter.Forms
 
             if (IsMovingDown && player.Y + player.Height < this.ClientSize.Height)
                 player.MoveDown();
+        }
+
+        private void ShootBullet()
+        {
+            if ((DateTime.Now - lastShootTime).TotalMilliseconds < fireRate)
+                return;
+
+            lastShootTime = DateTime.Now;
+
+            int bulletWidth = 6;
+            int bulletHeight = 15;
+            int bulletSpeedY = -1;
+
+            float bulletX = player.X + (player.Width / 2) - (bulletWidth / 2);
+            float bulletY = player.Y;
+
+            bullets.Add(new Bullet(bulletX,bulletY,bulletWidth,bulletHeight,0,bulletSpeedY,true));
         }
 
         private void GameForm_KeDown(object sender, KeyEventArgs e)
