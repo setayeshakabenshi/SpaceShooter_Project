@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace SpaceShooter.Forms
 {
-    public partial class Form1 : Form
+    public partial class OptionForm : Form
     {
-        public Form1()
+        public OptionForm()
         {
             InitializeComponent();
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

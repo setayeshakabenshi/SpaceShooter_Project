@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceShooter.Managers
 {
-    class Class1
+    class CollisionManager
     {
     }
 }

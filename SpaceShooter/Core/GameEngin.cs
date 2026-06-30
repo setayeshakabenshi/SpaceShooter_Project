@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceShooter.Core
 {
-    class Class1
+    class GameEngin
     {
     }
 }

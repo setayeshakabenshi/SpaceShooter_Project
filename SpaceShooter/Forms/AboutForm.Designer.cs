@@ -1,7 +1,7 @@
 ﻿
 namespace SpaceShooter.Forms
 {
-    partial class Form1
+    partial class AboutForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,12 +29,34 @@ namespace SpaceShooter.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(355, 192);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 23);
+            this.btnBack.TabIndex = 0;
+            this.btnBack.Text = "Back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // AboutForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnBack);
+            this.Name = "AboutForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.AboutForm_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btnBack;
     }
 }
