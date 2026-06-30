@@ -25,6 +25,25 @@ namespace SpaceShooter.Forms
         public GameForm()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
+        }
+
+
+
+        private void UpdatePlayerMovement(float deltaTime)
+        {
+            
+            if (IsMovingLeft && player.X > 0)
+                player.MoveLeft();
+
+            if (IsMovingRight && player.X + player.Width < this.ClientSize.Width)
+                player.MoveRight();
+
+            if (IsMovingUp && player.Y > 0)
+                player.MoveUp();
+
+            if (IsMovingDown && player.Y + player.Height < this.ClientSize.Height)
+                player.MoveDown();
         }
 
         private void GameForm_KeDown(object sender, KeyEventArgs e)
