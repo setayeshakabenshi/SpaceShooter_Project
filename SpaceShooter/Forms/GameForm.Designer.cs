@@ -29,12 +29,30 @@ namespace SpaceShooter.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.eventLog1 = new System.Diagnostics.EventLog();
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // eventLog1
+            // 
+            this.eventLog1.SynchronizingObject = this;
+            // 
+            // GameForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Name = "GameForm";
             this.Text = "Form1";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameForm_KeDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameForm_KeyUp);
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Diagnostics.EventLog eventLog1;
     }
 }
