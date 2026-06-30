@@ -22,6 +22,26 @@ namespace SpaceShooter.Entities
             Speed = speed;
         }
 
+        public void MoveLeft()
+        {
+            X -= Speed;
+        }
+
+        public void MoveRight()
+        {
+            X += Speed;
+        }
+
+        public void MoveUp()
+        {
+            Y -= Speed;
+        }
+
+        public void MoveDown()
+        {
+            Y += Speed;
+        }
+
         public override void Update(float deltaTime)
         {
 
