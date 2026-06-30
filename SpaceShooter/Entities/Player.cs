@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpaceShooter.Core;
+using System.Drawing;
 
 namespace SpaceShooter.Entities
 {
@@ -24,6 +25,11 @@ namespace SpaceShooter.Entities
         public override void Update(float deltaTime)
         {
 
+        }
+
+        public override void Draw(Graphics g)
+        {
+            g.FillRectangle(Brushes.Cyan, Bounds);
         }
 
     }
