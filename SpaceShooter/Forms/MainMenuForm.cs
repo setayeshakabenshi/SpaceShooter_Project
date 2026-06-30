@@ -8,18 +8,33 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Media;
+
 namespace SpaceShooter.Forms
 {
     public partial class MainMenuForm : Form
+
+
     {
+        private SoundPlayer ClickPlayer;
+
         public MainMenuForm()
         {
             InitializeComponent();
+            ClickPlayer = new SoundPlayer(Properties.Resources.resources_audio_menu_click);
+        }
+        private void PlayClickSound()
+        {
+            ClickPlayer.Play();
+        }
+        private void PlayClickSoundSync()
+        {
+            ClickPlayer.PlaySync();
         }
 
         private void btn_Play_Click(object sender, EventArgs e)
         {
-            
+            PlayClickSound();
 
             this.Hide();
             GameForm gameform = new GameForm();
@@ -30,6 +45,7 @@ namespace SpaceShooter.Forms
 
         private void btn_Shop_Click(object sender, EventArgs e)
         {
+            PlayClickSound();
             this.Hide();
             ShopForm shopform = new ShopForm();
             shopform.ShowDialog();
@@ -38,6 +54,7 @@ namespace SpaceShooter.Forms
 
         private void btn_Option_Click(object sender, EventArgs e)
         {
+            PlayClickSound();
             this.Hide();
             OptionForm optionform = new OptionForm();
             optionform.ShowDialog();
@@ -46,6 +63,7 @@ namespace SpaceShooter.Forms
 
         private void btn_About_Click(object sender, EventArgs e)
         {
+            PlayClickSound();
             this.Hide();
             AboutForm aboutform = new AboutForm();
             aboutform.ShowDialog();
@@ -54,6 +72,7 @@ namespace SpaceShooter.Forms
 
         private void btn_Quit_Click(object sender, EventArgs e)
         {
+            PlayClickSoundSync();
             Application.Exit();
         }
     }
