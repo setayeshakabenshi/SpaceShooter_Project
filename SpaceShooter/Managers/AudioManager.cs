@@ -14,8 +14,10 @@ namespace SpaceShooter
         private AudioFileReader bgmReader;
         private LoopStream bgmLoop;
 
-        private float musicVolume = 1.0f;
+        private float musicVolume = 0.5f;
         private float sfxVolume = 1.0f;
+        private bool musicMuted = false;
+        private bool sfxMuted = false;
 
         private List<WaveOutEvent> activeSfxOutputs = new List<WaveOutEvent>();
         private List<AudioFileReader> activeSfxReaders = new List<AudioFileReader>();
@@ -28,7 +30,8 @@ namespace SpaceShooter
                 throw new FileNotFoundException("Music file not found", path);
 
             bgmReader = new AudioFileReader(path);
-            bgmReader.Volume = 0.2f;
+            bgmReader.Volume = musicMuted ? 0f : musicVolume;
+
 
             bgmLoop = new LoopStream(bgmReader);
 
@@ -55,7 +58,7 @@ namespace SpaceShooter
         {
             musicVolume = Math.Max(0f, Math.Min(1f, volume));
 
-            if (bgmReader != null)
+            if (bgmReader != null && !musicMuted)
                 bgmReader.Volume = musicVolume;
         }
 
@@ -64,15 +67,35 @@ namespace SpaceShooter
             sfxVolume = Math.Max(0f, Math.Min(1f, volume));
         }
 
+        public void SetMusicMuted(bool muted)
+        {
+            musicMuted = muted;
+            if (bgmReader != null)
+                bgmReader.Volume = muted ? 0f : musicVolume;
+        }
+
+        public void SetSfxMuted(bool muted)
+        {
+            sfxMuted = muted;
+        }
+
+        public void SwitchTrack(string fullPath)
+        {
+            PlayBackgroundMusic(fullPath);
+        }
+
+
         public void PlaySoundEffect(string relativePath)
         {
+            if (sfxMuted) return;
+
             string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
             if (!File.Exists(fullPath))
                 throw new FileNotFoundException("SFX file not found", fullPath);
 
             var reader = new AudioFileReader(fullPath);
-            reader.Volume = 2.0f;
+            reader.Volume = sfxVolume;
 
             var output = new WaveOutEvent();
             output.Init(reader);
