@@ -9,7 +9,9 @@ namespace SpaceShooter.Entities.Enemies
         private const float ShootInterval = 1.5f;
         private const float Speed = 80f;
 
-        public ShooterEnemy(float x, float y) : base(x, y, 32, 32)
+        private AudioManager audioManager;
+
+        public ShooterEnemy(float x, float y, AudioManager audioManager) : base(x, y, 32, 32)
         {
             Health = 50;
             MaxHealth = 50;
@@ -17,6 +19,8 @@ namespace SpaceShooter.Entities.Enemies
             CoinValue = 15;
             Color = Color.Purple;
             Velocity = new PointF(0, Speed);
+
+            this.audioManager = audioManager;
         }
 
         public override void Update(float deltaTime)
@@ -39,6 +43,7 @@ namespace SpaceShooter.Entities.Enemies
         protected override void Shoot()
         {
             FireBullet(0f, 300f);
+            audioManager.PlaySoundEffect(@"F:\SpaceShooter\SpaceShooter\Resources\enemyshoot.wav");
         }
     }
 }
