@@ -38,7 +38,7 @@ namespace SpaceShooter.Forms
             // 
             // btn_Play
             // 
-            this.btn_Play.Location = new System.Drawing.Point(332, 79);
+            this.btn_Play.Location = new System.Drawing.Point(345, 202);
             this.btn_Play.Name = "btn_Play";
             this.btn_Play.Size = new System.Drawing.Size(75, 23);
             this.btn_Play.TabIndex = 0;
@@ -48,7 +48,7 @@ namespace SpaceShooter.Forms
             // 
             // btn_Shop
             // 
-            this.btn_Shop.Location = new System.Drawing.Point(332, 125);
+            this.btn_Shop.Location = new System.Drawing.Point(345, 248);
             this.btn_Shop.Name = "btn_Shop";
             this.btn_Shop.Size = new System.Drawing.Size(75, 23);
             this.btn_Shop.TabIndex = 1;
@@ -58,7 +58,7 @@ namespace SpaceShooter.Forms
             // 
             // btn_Option
             // 
-            this.btn_Option.Location = new System.Drawing.Point(332, 175);
+            this.btn_Option.Location = new System.Drawing.Point(345, 298);
             this.btn_Option.Name = "btn_Option";
             this.btn_Option.Size = new System.Drawing.Size(75, 23);
             this.btn_Option.TabIndex = 2;
@@ -68,7 +68,7 @@ namespace SpaceShooter.Forms
             // 
             // btn_About
             // 
-            this.btn_About.Location = new System.Drawing.Point(332, 238);
+            this.btn_About.Location = new System.Drawing.Point(345, 361);
             this.btn_About.Name = "btn_About";
             this.btn_About.Size = new System.Drawing.Size(75, 23);
             this.btn_About.TabIndex = 3;
@@ -78,7 +78,7 @@ namespace SpaceShooter.Forms
             // 
             // btn_Quit
             // 
-            this.btn_Quit.Location = new System.Drawing.Point(332, 310);
+            this.btn_Quit.Location = new System.Drawing.Point(345, 433);
             this.btn_Quit.Name = "btn_Quit";
             this.btn_Quit.Size = new System.Drawing.Size(75, 23);
             this.btn_Quit.TabIndex = 4;
@@ -90,7 +90,7 @@ namespace SpaceShooter.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 668);
             this.Controls.Add(this.btn_Quit);
             this.Controls.Add(this.btn_About);
             this.Controls.Add(this.btn_Option);

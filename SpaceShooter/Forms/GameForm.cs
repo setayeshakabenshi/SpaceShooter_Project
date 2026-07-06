@@ -1,161 +1,240 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using NAudio.Wave;
+using SpaceShooter.Core;
 using SpaceShooter.Entities;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Media;
+using System.Windows.Forms;
 
 namespace SpaceShooter.Forms
 {
     public partial class GameForm : Form
     {
-        private Timer GameTimer;
+        private GameEngine gameEngine;
+        private Timer gameTimer;
+        private DateTime lastUpdateTime;
+        private HashSet<Keys> pressedKeys;
+        private DateTime lastShootTime;
+        private const float ShootCooldown = 0.2f;
 
-        private Player player;
-
-        private DateTime lastTime;
-        private bool IsMovingLeft;
-        private bool IsMovingRight;
-        private bool IsMovingUp;
-        private bool IsMovingDown;
-
-        private DateTime lastShootTime = DateTime.MinValue;
-
-        private List<Bullet> bullets;
-
-        private int fireRate = 200;
+        private AudioManager audioManager;
 
         public GameForm()
         {
             InitializeComponent();
-            this.DoubleBuffered = true;
             InitializeGame();
         }
 
         private void InitializeGame()
         {
-            lastTime = DateTime.Now;
-            player = new Player(180, 400, 50, 50, 8);
-            GameTimer = new Timer();
-            GameTimer.Interval = 20;
-            GameTimer.Tick += Gameloop;
-            GameTimer.Start();
+            audioManager = new AudioManager();
+            audioManager.SetMusicVolume(0.05f);
+            audioManager.SetSfxVolume(1.0f);
+            audioManager.PlayBackgroundMusic(@"F:\SpaceShooter\SpaceShooter\Resources\Background1.wav");
 
-            bullets = new List<Bullet>();
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.DoubleBuffered = true;
+            this.BackColor = Color.Black;
 
-        }
+            gameEngine = new GameEngine(this.ClientSize.Width, this.ClientSize.Height, audioManager);
 
-        private void Gameloop(object sender, EventArgs e)
-        {
-            DateTime now = DateTime.Now;
-            float deltaTime = (float)(now - lastTime).TotalMilliseconds;
-            lastTime = now;
-            UpdatePlayerMovement(deltaTime);
-            UpdateBullets(deltaTime);
-            Invalidate();
-        }
 
-        private void UpdatePlayerMovement(float deltaTime)
-        {
-            
-            if (IsMovingLeft && player.X > 0)
-                player.MoveLeft();
-
-            if (IsMovingRight && player.X + player.Width < this.ClientSize.Width)
-                player.MoveRight();
-
-            if (IsMovingUp && player.Y > 0)
-                player.MoveUp();
-
-            if (IsMovingDown && player.Y + player.Height < this.ClientSize.Height)
-                player.MoveDown();
-        }
-
-        private void ShootBullet()
-        {
-            if ((DateTime.Now - lastShootTime).TotalMilliseconds < fireRate)
-                return;
-
+            pressedKeys = new HashSet<Keys>();
+            lastUpdateTime = DateTime.Now;
             lastShootTime = DateTime.Now;
 
-            int bulletWidth = 6;
-            int bulletHeight = 15;
-            int bulletSpeedY = -1;
+            gameTimer = new Timer();
+            gameTimer.Interval = 16; 
+            gameTimer.Tick += GameTimer_Tick;
+            gameTimer.Start();
 
-            float bulletX = player.X + (player.Width / 2) - (bulletWidth / 2);
-            float bulletY = player.Y;
-
-            bullets.Add(new Bullet(bulletX,bulletY,bulletWidth,bulletHeight,0,bulletSpeedY,true));
+            this.KeyDown += GameForm_KeyDown;
+            this.KeyUp += GameForm_KeyUp;
+            this.Paint += GameForm_Paint;
         }
 
-        private void UpdateBullets(float deltaTime)
+        private void GameTimer_Tick(object sender, EventArgs e)
         {
-            for (int i = bullets.Count - 1; i >= 0; i--)
-            {
-                bullets[i].Update(deltaTime);
+            DateTime currentTime = DateTime.Now;
+            float deltaTime = (float)(currentTime - lastUpdateTime).TotalSeconds;
+            lastUpdateTime = currentTime;
 
-                if (bullets[i].Y + bullets[i].Height < 0)
+            if (pressedKeys.Contains(Keys.Space))
+            {
+                TimeSpan timeSinceLastShoot = currentTime - lastShootTime;
+                if (timeSinceLastShoot.TotalSeconds >= ShootCooldown)
                 {
-                    bullets.RemoveAt(i);
+                    audioManager.PlaySoundEffect(@"F:\SpaceShooter\SpaceShooter\Resources\shooting.wav");
+
+                    gameEngine.Player.Shoot();
+                    if (gameEngine.Player.LastBullet != null)
+                    {
+                        gameEngine.Bullets.Add(gameEngine.Player.LastBullet);
+                    }
+                    lastShootTime = currentTime;
                 }
             }
+
+            gameEngine.Update(deltaTime);
+
+            if (gameEngine.IsGameComplete)
+            {
+                GameComplete();
+                return;
+            }
+
+            HandleInput(deltaTime);
+
+            if (gameEngine.Player.Health <= 0)
+            {
+                GameOver();
+                audioManager.StopBackgroundMusic();
+                
+            }
+
+            this.Invalidate();
+        }
+
+        private void GameComplete()
+        {
+            gameTimer.Stop();
+            audioManager.StopBackgroundMusic();
+            audioManager.PlaySoundEffect(@"F:\SpaceShooter\SpaceShooter\Resources\Winning.wav");
+            MessageBox.Show(
+                $"CONGRATS! YOU WON!\n\nFinal score: {gameEngine.Player.Score}\nCoins gained: {gameEngine.Player.Coins}",
+                "End Game",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+            this.Close();
         }
 
 
-        private void GameForm_KeDown(object sender, KeyEventArgs e)
+
+        private void HandleInput(float deltaTime)
         {
+            float moveSpeed = 300f * deltaTime;
+
+            if (pressedKeys.Contains(Keys.Left) || pressedKeys.Contains(Keys.A))
+            {
+                gameEngine.Player.Position = new System.Drawing.PointF(
+                    Math.Max(0, gameEngine.Player.Position.X - moveSpeed),
+                    gameEngine.Player.Position.Y
+                );
+            }
+
+            if (pressedKeys.Contains(Keys.Right) || pressedKeys.Contains(Keys.D))
+            {
+                gameEngine.Player.Position = new System.Drawing.PointF(
+                    Math.Min(this.ClientSize.Width - gameEngine.Player.Size.Width,
+                             gameEngine.Player.Position.X + moveSpeed),
+                    gameEngine.Player.Position.Y
+                );
+            }
+
+            if (pressedKeys.Contains(Keys.Up) || pressedKeys.Contains(Keys.W))
+            {
+                gameEngine.Player.Position = new System.Drawing.PointF(
+                    gameEngine.Player.Position.X,
+                    Math.Max(0, gameEngine.Player.Position.Y - moveSpeed)
+                );
+            }
+
+            if (pressedKeys.Contains(Keys.Down) || pressedKeys.Contains(Keys.S))
+            {
+                gameEngine.Player.Position = new System.Drawing.PointF(
+                    gameEngine.Player.Position.X,
+                    Math.Min(this.ClientSize.Height - gameEngine.Player.Size.Height,
+                             gameEngine.Player.Position.Y + moveSpeed)
+                );
+            }
+        }
+
+        private void GameForm_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            gameEngine.Draw(g);
+            DrawHUD(g);
+        }
+
+        private void DrawHUD(Graphics g)
+        {
+            using (Font font = new Font("Arial", 16, FontStyle.Bold))
+            {
+                g.DrawString($"Health: {gameEngine.Player.Health}", font, Brushes.White, 10, 10);
+                g.FillRectangle(Brushes.Red, 10, 40, gameEngine.Player.Health * 2, 20);
+                g.DrawRectangle(Pens.White, 10, 40, 200, 20);
+
+                g.DrawString($"Score: {gameEngine.Player.Score}", font, Brushes.White, 10, 70);
+                g.DrawString($"Coins: {gameEngine.Player.Coins}", font, Brushes.Gold, 10, 100);
+
+                g.DrawString($"Wave: {gameEngine.CurrentWave}", font, Brushes.Cyan, 10, 130);
+
+            }
+        }
+
+        private void GameForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            pressedKeys.Add(e.KeyCode);
+
             if (e.KeyCode == Keys.Escape)
             {
-                this.Close(); 
+                PauseGame();
             }
-            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.A)
-                IsMovingLeft = true;
-
-            if (e.KeyCode == Keys.Right || e.KeyCode == Keys.D)
-                IsMovingRight = true;
-
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.W)
-                IsMovingUp = true;
-
-            if (e.KeyCode == Keys.Down || e.KeyCode == Keys.S)
-                IsMovingDown = true;
-            if (e.KeyCode == Keys.Space)
-                ShootBullet();
-
         }
 
         private void GameForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.A)
-                IsMovingLeft = false;
-
-            if (e.KeyCode == Keys.Right || e.KeyCode == Keys.D)
-                IsMovingRight = false;
-
-            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.W)
-                IsMovingUp = false;
-
-            if (e.KeyCode == Keys.Down || e.KeyCode == Keys.S)
-                IsMovingDown = false;
-
+            pressedKeys.Remove(e.KeyCode);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void PauseGame()
         {
-            base.OnPaint(e);
+            gameTimer.Stop();
+            DialogResult result = MessageBox.Show(
+                "Game Paused\nReturn to main menu?",
+                "Pause",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
-            player.Draw(e.Graphics);
-
-            foreach (Bullet bullet in bullets)
+            if (result == DialogResult.Yes)
             {
-                bullet.Draw(e.Graphics);
+                this.Close();
             }
+            else
+            {
+                lastUpdateTime = DateTime.Now;
+                gameTimer.Start();
+            }
+        }
 
+        private void GameOver()
+        {
+            gameTimer.Stop();
+            audioManager.StopBackgroundMusic();
+            audioManager.PlaySoundEffect(@"F:\SpaceShooter\SpaceShooter\Resources\gameover.wav");
+            MessageBox.Show(
+                $"Game Over!\nScore: {gameEngine.Player.Score}\nCoins: {gameEngine.Player.Coins}",
+                "Game Over",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+            this.Close();
+        }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            gameTimer?.Stop();
+            gameTimer?.Dispose();
+            base.OnFormClosing(e);
+            audioManager.StopBackgroundMusic();
         }
     }
+
 }
