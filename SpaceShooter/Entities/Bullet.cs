@@ -12,8 +12,10 @@ namespace SpaceShooter.Entities
         private const float Speed = 500f;
 
         public Bullet(float x, float y, float directionX, float directionY, bool isPlayerBullet)
-            : base(x, y, 5, 15)
+            : base(x, y, 15, 15)
         {
+            Position = new PointF(x - Size.Width / 2f, y);
+
             float length = (float)System.Math.Sqrt(directionX * directionX + directionY * directionY);
             if (length > 0)
             {
@@ -40,7 +42,7 @@ namespace SpaceShooter.Entities
         public override void Draw(Graphics g)
         {
             Brush brush = IsPlayerBullet ? Brushes.Yellow : Brushes.Red;
-            g.FillRectangle(brush, Position.X, Position.Y, Size.Width, Size.Height);
+            g.DrawImage(GameAssets.BulletImg, Position.X, Position.Y, Size.Width, Size.Height);
         }
     }
 }
