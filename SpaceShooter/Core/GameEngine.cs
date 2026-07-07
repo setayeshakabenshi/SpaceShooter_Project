@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.Drawing.Drawing2D;
 
 namespace SpaceShooter.Core
 {
@@ -40,6 +41,8 @@ namespace SpaceShooter.Core
         public GameEngine(int screenWidth, int screenHeight, AudioManager audioManager)
         {
             this.audioManager = audioManager;
+
+            GameAssets.Load();
 
             Player = new Player(screenWidth + 150 , screenHeight + 300);
             Enemies = new List<Enemy>();
@@ -345,6 +348,9 @@ namespace SpaceShooter.Core
 
         public void Draw(Graphics g)
         {
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
+
             Player.Draw(g);
 
             foreach (var enemy in Enemies)
@@ -365,7 +371,7 @@ namespace SpaceShooter.Core
 
         public void PlayerShoot()
         {
-            float bulletX = Player.Position.X + Player.Size.Width / 2 - 2.5f;
+            float bulletX = Player.Position.X + Player.Size.Width / 2 - 2.5f ;
             float bulletY = Player.Position.Y;
             Bullets.Add(new Bullet(bulletX, bulletY, 0, -500, true));
         }
