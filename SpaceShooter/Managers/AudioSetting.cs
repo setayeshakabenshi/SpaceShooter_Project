@@ -12,10 +12,10 @@ namespace SpaceShooter
 
         public static readonly List<(string Name, string Path)> Tracks = new List<(string, string)>
             {
-                ("Track 1", @"Resources\Background1.wav"),
-                ("Track 2", @"Resources\Background2.wav"),
-                ("Track 3", @"Resources\Background3.wav"),
-                ("Track 4", @"Resources\Background4.wav"),
+                ("Track 1", @"Resources\Background2.wav"),
+                ("Track 2", @"Resources\Background1.wav"),
+                ("Track 3", @"Resources\Background4.wav"),
+                ("Track 4", @"Resources\Background3.wav"),
             };
     }
 }
