@@ -1,6 +1,7 @@
 ﻿using NAudio.Wave;
 using SpaceShooter.Core;
 using SpaceShooter.Entities;
+using SpaceShooter.Managers.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -109,12 +110,26 @@ namespace SpaceShooter.Forms
             gameTimer.Stop();
             audioManager.StopBackgroundMusic();
             audioManager.PlaySoundEffect(@"Resources\Winning.wav");
+
+            int currentScore = gameEngine.Player.Score;
+            int highScore = PlayerRepository.GetHighScore();
+
+            bool isNewRecord = currentScore > highScore;
+
+            if (isNewRecord)
+            {
+                PlayerRepository.SaveHighScore(currentScore);
+            }
+
             MessageBox.Show(
                 $"CONGRATS! YOU WON!\n\nFinal score: {gameEngine.Player.Score}\nCoins gained: {gameEngine.Player.Coins}",
                 "End Game",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information
             );
+
+            ShopRepository.ResetConsumableStatus();
+
             this.Close();
         }
 
@@ -179,7 +194,7 @@ namespace SpaceShooter.Forms
             {
                 g.DrawString($"Health: {gameEngine.Player.Health}", font, Brushes.White, 10, 10);
                 g.FillRectangle(Brushes.Red, 10, 40, gameEngine.Player.Health * 2, 20);
-                g.DrawRectangle(Pens.White, 10, 40, 200, 20);
+                g.DrawRectangle(Pens.White, 10, 40, gameEngine.Player.Health * 2, 20);
 
                 g.DrawString($"Score: {gameEngine.Player.Score}", font, Brushes.White, 10, 70);
                 g.DrawString($"Coins: {gameEngine.Player.Coins}", font, Brushes.Gold, 10, 100);
@@ -214,6 +229,16 @@ namespace SpaceShooter.Forms
                 MessageBoxIcon.Question
             );
 
+            int currentScore = gameEngine.Player.Score;
+            int highScore = PlayerRepository.GetHighScore();
+
+            bool isNewRecord = currentScore > highScore;
+
+            if (isNewRecord)
+            {
+                PlayerRepository.SaveHighScore(currentScore);
+            }
+
             if (result == DialogResult.Yes)
             {
                 this.Close();
@@ -223,6 +248,8 @@ namespace SpaceShooter.Forms
                 lastUpdateTime = DateTime.Now;
                 gameTimer.Start();
             }
+            ShopRepository.ResetConsumableStatus();
+
         }
 
         private void GameOver()
@@ -230,14 +257,37 @@ namespace SpaceShooter.Forms
             gameTimer.Stop();
             audioManager.StopBackgroundMusic();
             audioManager.PlaySoundEffect(@"Resources\gameover.wav");
+
+            int currentScore = gameEngine.Player.Score;
+            int currentCoins = gameEngine.Player.Coins;
+            int highScore = PlayerRepository.GetHighScore();
+
+            bool isNewRecord = currentScore > highScore;
+
+            string message = $"Game Over!\nScore: {currentScore}\nCoins: {currentCoins}\n";
+
+            if (isNewRecord)
+            {
+                message += $"\n🎉 NEW HIGH SCORE! 🎉\nPrevious: {highScore}";
+                PlayerRepository.SaveHighScore(currentScore);
+            }
+            else
+            {
+                message += $"\nHigh Score: {highScore}";
+            }
+
             MessageBox.Show(
-                $"Game Over!\nScore: {gameEngine.Player.Score}\nCoins: {gameEngine.Player.Coins}",
-                "Game Over",
+                message,
+                isNewRecord ? "New Record!" : "Game Over",
                 MessageBoxButtons.OK,
-                MessageBoxIcon.Information
+                isNewRecord ? MessageBoxIcon.Exclamation : MessageBoxIcon.Information
             );
+
+            ShopRepository.ResetConsumableStatus();
+
             this.Close();
         }
+
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
