@@ -16,6 +16,8 @@ namespace SpaceShooter.Entities
         private float shootTimer = 0f;
 
         public int Health { get; set; }
+        public int MaxHealth { get; set; } = 100;
+        public int ExtraLives { get; set; } = 0;
         public int Score { get; set; }
         public int Coins { get; set; }
         public Bullet LastBullet { get; private set; }
@@ -25,6 +27,13 @@ namespace SpaceShooter.Entities
             Health = 100;
             Score = 0;
             Coins = 0;
+        }
+
+        public void AddExtraLife()
+        {
+            ExtraLives++;
+            MaxHealth += 50;
+            Health = MaxHealth;
         }
 
         public void HandleInput(HashSet<Keys> pressedKeys, float deltaTime)
