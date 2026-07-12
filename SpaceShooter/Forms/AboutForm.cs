@@ -56,7 +56,7 @@ namespace SpaceShooter.Forms
                     "Name:  Setayesh Jahedi\n" +
                 "Student Code:  403411474 \n\n" +
                     "Name:  Zeinab Yaghoubi\n" +
-                    "Student Code:  ",
+                    "Student Code:  403462073",
                 Font = new Font("Courier New", 13, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.Transparent,
