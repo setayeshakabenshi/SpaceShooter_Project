@@ -86,23 +86,23 @@ namespace SpaceShooter.Managers
             {
                 ("ShipSkin", "player_white", 0, 1, 1),
                 ("ShipSkin", "player_blue", 5, 0, 0),
-                ("ShipSkin", "player_gray", 0, 0, 0),
-                ("ShipSkin", "player_green", 0, 0, 0),
-                ("ShipSkin", "player_yellow", 0, 0, 0),
+                ("ShipSkin", "player_gray", 10, 0, 0),
+                ("ShipSkin", "player_green", 20, 0, 0),
+                ("ShipSkin", "player_yellow", 50, 0, 0),
 
                 ("BulletStyle", "yellow_bullet", 0, 1, 1),
-                ("BulletStyle", "blue_bullet", 0, 0, 0),
-                ("BulletStyle", "green_bullet", 0, 0, 0),
-                ("BulletStyle", "red_bullet", 0, 0, 0),
-                ("BulletStyle", "purple_bullet", 0, 0, 0),
+                ("BulletStyle", "blue_bullet", 5, 0, 0),
+                ("BulletStyle", "green_bullet", 10, 0, 0),
+                ("BulletStyle", "red_bullet", 15, 0, 0),
+                ("BulletStyle", "purple_bullet", 20, 0, 0),
 
                 ("Background", "background1", 0, 1, 1),
-                ("Background", "background2", 0, 0, 0),
-                ("Background", "background3", 0, 0, 0),
-                ("Background", "background4", 0, 0, 0),
-                ("Background", "background5", 0, 0, 0),
+                ("Background", "background2", 5, 0, 0),
+                ("Background", "background3", 10, 0, 0),
+                ("Background", "background4", 30, 0, 0),
+                ("Background", "background5", 50, 0, 0),
 
-                ("Consumable", "extralife", 0, 0, 0)
+                ("Consumable", "extralife", 10, 0, 0)
             };
 
             foreach (var item in defaultItems)
